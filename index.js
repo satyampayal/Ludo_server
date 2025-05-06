@@ -41,7 +41,7 @@ function handleMessage(ws, data) {
   console.log("handleMessage data is "+data);
   switch (data.event) {
     case "join":
-      joinRoom(ws, data.roomId, data.playerName);
+      joinRoom(ws, data.roomId, data.playerName,data.maxPlayer);
       break;
     case "move":
       broadcastMove(data.roomId, data.move);
@@ -51,13 +51,13 @@ function handleMessage(ws, data) {
   }
 }
 
-function joinRoom(ws, roomId, playerName) {
+function joinRoom(ws, roomId, playerName,maxPlayer) {
   if (!rooms[roomId]) {
     rooms[roomId] = [];
   }
 
-  if (rooms[roomId].length >= 4) {
-    ws.send(JSON.stringify({ type: "error", message: "Room full" }));
+  if (rooms[roomId].length > maxPlayer) {
+    ws.send(JSON.stringify({ event: "error", message: "Room full ",roomId, }));
     return;
   }
 
@@ -66,11 +66,12 @@ function joinRoom(ws, roomId, playerName) {
 
   // ✅ Send confirmation to the joining player
   ws.send(JSON.stringify({
+    event:"player_joined",
     roomId,
     playerName,
-    players: 1,
+    players:rooms[roomId].length ,
     message: "Successfully joined room!",
-    event:"player_joined"
+    maxPlayer
   }));
 
   // 📢 Broadcast to all players (including the one who joined)
@@ -83,10 +84,10 @@ function joinRoom(ws, roomId, playerName) {
   // });
 
   // 🎮 Start game if room is full
-  if (rooms[roomId].length === 4) {
+  if (rooms[roomId].length === maxPlayer) {
     rooms[roomId].forEach((client, index) => {
       client.ws.send(JSON.stringify({
-        event: "start",
+        event: "start_game",
         yourTurn: index === 0,
       }));
     });
