@@ -23,7 +23,7 @@ wss.on("connection", (ws) => {
 
   ws.on("message", (msg) => {
     try {
-        console.log(msg);
+        console.log("ws.on Message is "+msg);
       const data = JSON.parse(msg);
       console.log(data);
       handleMessage(ws, data);
@@ -38,7 +38,7 @@ wss.on("connection", (ws) => {
 });
 
 function handleMessage(ws, data) {
-    console.log(data);
+    console.log("handleMessage data is "+data);
     data.type="join";
     data.roomId=1;
     data.playerName="sa";
