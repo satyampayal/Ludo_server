@@ -46,6 +46,9 @@ function handleMessage(ws, data) {
     case "move":
       broadcastMove(data.roomId, data.move);
       break;
+    case "dice_turn":
+      // broadcastMove(data.roomId, data.move);
+      break;
     default:
       console.log("❓ Unknown message type", data.event);
   }
@@ -85,12 +88,13 @@ function joinRoom(ws, roomId, playerName,maxPlayer) {
 
   // 🎮 Start game if room is full
   if (rooms[roomId].length === maxPlayer) {
-    // rooms[roomId].forEach((client, index) => {
+    rooms[roomId].forEach((client, index) => {
       ws.send(JSON.stringify({
         event: "start_game",
         yourTurn: index === 0,
+        index
       }));
-    // });
+    });
   }
 }
 
