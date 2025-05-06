@@ -85,12 +85,12 @@ function joinRoom(ws, roomId, playerName,maxPlayer) {
 
   // 🎮 Start game if room is full
   if (rooms[roomId].length === maxPlayer) {
-    rooms[roomId].forEach((client, index) => {
-      client.ws.send(JSON.stringify({
+    // rooms[roomId].forEach((client, index) => {
+      ws.send(JSON.stringify({
         event: "start_game",
         yourTurn: index === 0,
       }));
-    });
+    // });
   }
 }
 
